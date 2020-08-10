@@ -33,37 +33,35 @@ def look(query,num_results):
     global totalWord
     totalWord = 0
     # use google api to search for link with query and return a certain result
-    results =  search(query, tld="com", num=1, stop=num_results, pause=2)
+    results =  search(query, tld="com", num=2, stop=num_results, pause=2)
     links = []
     for j in results:
         print(j)
         links.append(j)
     for j in links:
-        print(j)
-        html_content = requests.get(j).text
-        soup = bs(html_content, "html.parser")
-        print("Extracted the html and souped, proceeding")
-        for tag in ['script', 'button','nav', 'a', "style"]:
-            for t in soup.select(tag):
-                t.extract()
-        texts = soup.find('body')
         try:
+            print(j)
+            html_content = requests.get(j).text
+            soup = bs(html_content, "html.parser")
+            print("Extracted the html and souped, proceeding")
+            for tag in ['script', 'button','nav', 'a', "style"]:
+                for t in soup.select(tag):
+                    t.extract()
+            texts = soup.find('body')
             if len(texts.get_text()) >= 1600:
                 paragraph.append(texts.get_text())
                 totalWord += len(texts.get_text())
         except:
             continue
  
-def summary(sentResults):
-    toolbar_width = 40
-
+def summary(texts, sentResults):
 
     wordRank = {}#the rank of all the word
     sentRank = {}#the rank of all the sentence base on the word within
     #get the text, find the highest occurence of words
     #find their own gramatical counter part
-    for text in paragraph:
-        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~']:
+    for text in texts:
+        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|', "@", '!']:
             text = text.replace(sign, "")
     
         
@@ -102,7 +100,7 @@ def summary(sentResults):
     
     #split and get the sentence with the most point
 
-    for text in paragraph:
+    for text in texts:
 
         sentenceList = sent_tokenize(text)
         for sentence in sentenceList:
@@ -117,29 +115,35 @@ def summary(sentResults):
             sentRank[sentence] = score
     #return the highest socre sentences
     sortedSent = sorted(sentRank, key = sentRank.get, reverse = True)
+    print(sortedSent)
     sys.stdout.flush()
     sentences = []
     global resultWord
     resultWord = 0
-    for sent in sortedSent[0:sentResults]:
+    for sent in sortedSent:
         sentence = ""
         words = word_tokenize(sent)
         for word in words:
             if word != " ":
-                resultWord += len(word)
                 if word in ['.', ',', '?', ':']:
                     sentence += word
                 elif word in ['"', ")"]:
                     sentence += word + ' ' 
                 else:
                     sentence += ' ' + word
-        sentences.append(sentence)
-    return sentences
+        if len(sentence) >= 30:
+            sentences.append(sentence)
+            resultWord += len(sentence)
+    print("Short", resultWord/totalWord * 100, "%")
+    print("------------------------------------------------------------------------")
+    return sentences[0:sentResults]
     
 x = input("Search for summary: ")
 
-look(x, 3)
-for suma in summary(10):
+look(x, 30)
+
+for suma in summary(paragraph, 10):
     print(suma)
-print("Short", resultWord/totalWord * 100, "%")
+
+
     
