@@ -61,7 +61,7 @@ def summary(texts, sentResults):
     #get the text, find the highest occurence of words
     #find their own gramatical counter part
     for text in texts:
-        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|', "@", '!']:
+        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|', "@", '!', '<', '>']:
             text = text.replace(sign, "")
     
         
@@ -137,13 +137,18 @@ def summary(texts, sentResults):
     print("Short", resultWord/totalWord * 100, "%")
     print("------------------------------------------------------------------------")
     return sentences[0:sentResults]
-    
+
+lookAmt = 30
+resultAmt = 5
+  
 x = input("Search for summary: ")
-
-look(x, 30)
-
-for suma in summary(paragraph, 10):
-    print(suma)
+    
+look(x, lookAmt)
+i = 1
+for suma in summary(paragraph, resultAmt):
+    print('[' + str(i) + ']', suma)
+    i += 1
+    
 
 
     
