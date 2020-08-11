@@ -14,6 +14,7 @@ try:
     from googlesearch import search
 except:
     print('search module not found')
+import xlsxwriter
 
 
 
@@ -61,7 +62,7 @@ def summary(texts, sentResults):
     #get the text, find the highest occurence of words
     #find their own gramatical counter part
     for text in texts:
-        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|', "@", '!', '<', '>']:
+        for sign in [',','.','"','...',':', "?","'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|', "@", '!', '<', '>', '{', ')']:
             text = text.replace(sign, "")
     
         
@@ -90,14 +91,13 @@ def summary(texts, sentResults):
                 else:
                     wordRank[word.lower()] = 1 #reset the frequency, giving a default frequency to add on later     
             
-            
     #show table
     print("------------------------------------------------------------------------")
     df = pd.DataFrame(sorted(wordRank, reverse = True, key = wordRank.get), columns =['word'])
     print(df)
     df = pd.DataFrame.from_dict(wordRank,columns =['frequency'], orient ="index")
     print(df)
-    
+
     #split and get the sentence with the most point
 
     for text in texts:
@@ -105,18 +105,18 @@ def summary(texts, sentResults):
         sentenceList = sent_tokenize(text)
         for sentence in sentenceList:
             score = 0
-
-            for word in sentence:
+            for word in word_tokenize(sentence):
                 try:
                     lm_word = lemmatizer.lemmatize(word, pos = wn.synsets(word)[0].pos())# lemantized the word
-                    score += wordRank.get(lm_word, default = 0) #check the number of frequency of each word in its lemantized form
+                    score += wordRank[lm_word] #assigned point for the sentence base on frequency of the word
+
                 except:
                     continue
+            if len(word_tokenize(sentence)) >= 100:
+                score -= len(word_tokenize(sentence)) * 65
             sentRank[sentence] = score
     #return the highest socre sentences
     sortedSent = sorted(sentRank, key = sentRank.get, reverse = True)
-    print(sortedSent)
-    sys.stdout.flush()
     sentences = []
     global resultWord
     resultWord = 0
@@ -128,26 +128,31 @@ def summary(texts, sentResults):
                 if word in ['.', ',', '?', ':']:
                     sentence += word
                 elif word in ['"', ")"]:
-                    sentence += word + ' ' 
+                    sentence += word + ' '
                 else:
                     sentence += ' ' + word
         if len(sentence) >= 30:
             sentences.append(sentence)
-            resultWord += len(sentence)
+    
+    print("------------------------------------------------------------------------")
+    for result in sentences[0:sentResults]:
+        resultWord +=len(result)
     print("Short", resultWord/totalWord * 100, "%")
     print("------------------------------------------------------------------------")
     return sentences[0:sentResults]
 
-lookAmt = 30
-resultAmt = 5
-  
-x = input("Search for summary: ")
-    
-look(x, lookAmt)
-i = 1
-for suma in summary(paragraph, resultAmt):
-    print('[' + str(i) + ']', suma)
-    i += 1
+#main loop
+if __name__ == "__main__":
+    lookAmt = 30
+    resultAmt = 5
+    x = input("Search for summary: ")
+        
+    look(x, lookAmt)
+    i = 1
+    for suma in summary(paragraph, resultAmt):
+        print('[' + str(i) + ']', suma + '\n')
+        
+        i += 1
     
 
 
