@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import WordNetLemmatizer
 import pandas as pd
+from ftfy import fix_text
 try:
     from googlesearch import search
 except:
@@ -26,16 +27,21 @@ dictionary = PyDictionary()
 #define global variable
 paragraph = []
 command = None
-shortPercent = 0
-
 class brevis():
+    def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = paragraph, totalWord = 0):
+        self.paragraph = paragraph
+        self.query = query
+        self.lookAmt = lookAmt
+        self.resultAmt = resultAmt
+        self.shortResult = shortResult
+        self.totalWord = totalWord
 
 
-    def look(query, num_results):
-        global totalWord
-        totalWord = 0
+
+    def look(self):
+        self.totalWord = 0
         # use google api to search for link with query and return a certain result
-        results = search(query, tld="com", num=2, stop=num_results, pause=2, lang='en')
+        results = search(self.query, tld="com", num=2, stop=self.lookAmt, pause=2, lang='en')
         links = []
         for j in results:
             print(j)
@@ -54,20 +60,20 @@ class brevis():
                         t.extract()
                 texts = soup.find('body')
                 if len(texts.get_text()) >= 1600:
-                    paragraph.append(texts.get_text())
-                    totalWord += len(texts.get_text())
+                    self.paragraph.append(texts.get_text())
+                    self.totalWord += len(texts.get_text())
             except:
                 continue
 
-    def summary(texts, sentResults, shortest):
-
+    def summary(self):
+        returnObj = {} #this is the object will be return in a json like type
         wordRank = {}  # the rank of all the word
         sentRank = {}  # the rank of all the sentence base on the word within
         # get the text, find the highest occurence of words
         # find their own gramatical counter part
-        for text in texts:
+        for text in self.paragraph:
             for sign in [',', '.', '"', '...', ':', "?", "'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|',
-                         "@", '!', '<', '>', '{', ')', '&']:
+                         "@", '!', '<', '>', '{', ')', '&',';', 'â€™']:
                 text = text.replace(sign, "")
 
             instanceText = word_tokenize(text.lower())  # Instance of the real text
@@ -107,7 +113,7 @@ class brevis():
 
         # split and get the sentence with the most point
 
-        for text in texts:
+        for text in self.paragraph:
 
             sentenceList = sent_tokenize(text)
             for sentence in sentenceList:
@@ -119,10 +125,10 @@ class brevis():
 
                     except:
                         continue
-                if len(word_tokenize(sentence)) >= 100 and shortest:
+                if len(word_tokenize(sentence)) >= 100 and self.shortResult:
                     score -= len(word_tokenize(sentence)) * 65
                 sentRank[sentence] = score
-        # return the highest socre sentences
+        # return the highest score sentences
         sortedSent = sorted(sentRank, key=sentRank.get, reverse=True)
         sentences = []
         global resultWord
@@ -139,24 +145,26 @@ class brevis():
                     else:
                         sentence += ' ' + word
             if len(sentence) >= 30:
-                sentences.append(sentence)
+                sentences.append(fix_text(sentence))
 
         print("------------------------------------------------------------------------")
-        for result in sentences[0:sentResults]:
+        for result in sentences[0:self.resultAmt]:
             resultWord += len(result)
-        print("Short", resultWord / totalWord * 100, "%")
-        shortPercent = resultWord / totalWord * 100
+        print("Short", resultWord / self.totalWord * 100, "%")
         print("------------------------------------------------------------------------")
-        return sentences[0:sentResults]
-    def main(query, lookAmt = 15, resultAmt = 5, shortResult = False):
-
-        brevis.look(query, lookAmt)
-        results =  brevis.summary(paragraph, resultAmt, shortResult)
-        print(shortPercent)
+        returnObj['summary'] = sentences[0:self.resultAmt]
+        returnObj['wordRank'] = wordRank
+        returnObj['sentenceRank'] = sentRank
+        returnObj['percentage'] =  resultWord / self.totalWord * 100
+        return returnObj
+    def main(self):
+        self.paragraph = []
+        self.look()
+        results =  self.summary()
         return results
 
 #main loop
-if __name__ == "__main__":
+if False:
     lookAmt = 30
     resultAmt = 5
     x = input("Search for summary: ")

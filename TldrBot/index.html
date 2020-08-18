@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brevis</title>
+</head>
+<body>
+	<label for='search'>Query:</label>
+    <input type="" name="search" id='query'>
+    <button onclick="search()">search</button>
+</body>
+<script type="text/javascript">
+	function search(){
+		var query = document.getElementById('query').value;
+		var req = query.replace(' ', '%20')
+		window.location.href = 'http://localhost:8000/' + req
+	}
+</script>
+</html>
