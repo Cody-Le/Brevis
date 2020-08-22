@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 from bs4.element import Comment
 import nltk
+from google_images_search import GoogleImagesSearch
 from PyDictionary import PyDictionary
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
@@ -15,6 +16,7 @@ try:
     from googlesearch import search
 except:
     print('search module not found')
+from imgGet import imgGet
 import xlsxwriter
 
 
@@ -36,6 +38,14 @@ class brevis():
         self.shortResult = shortResult
         self.totalWord = totalWord
 
+
+
+
+
+    def firstImage(self):
+        getter = imgGet(self.query)
+        img = getter.getImg()
+        return img
 
 
     def look(self):
@@ -161,6 +171,7 @@ class brevis():
         self.paragraph = []
         self.look()
         results =  self.summary()
+        self.firstImage()
         return results
 
 #main loop

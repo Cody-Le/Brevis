@@ -1,6 +1,7 @@
 import socketserver
 from http.server import BaseHTTPRequestHandler
 from brevis import brevis
+from imgGet import imgGet
 
 
 
@@ -12,8 +13,13 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         if self.path != '/':
             output = ''
-            output += '''<p>
-                            <h1>Brevis</h1>
+            output += '''<html>
+                        <head>
+                            <title>Brevis</title>
+                        </head>
+                        <body style="font-family: san-serif;">
+                            <p>
+                            <h1 style="text-align: center;">Brevis</h1>
                             
                             '''
             i = 0
@@ -21,11 +27,12 @@ class Handler(BaseHTTPRequestHandler):
             query = query.replace('/', '')
             brevisObj = brevis(query)
             results = brevisObj.main()
-            output += '<h2>Query: {},  summarize to {}%</h2>'.format(query, results['percentage'])
+            img = imgGet(query = query)
+            output += '<h2 style= "text-align: center;">Query: {},  summarize to {}%</h2><br><h2>Summary</h2><br><img src={}><div style="padding: 200px;">'.format(query, results['percentage'], img.getImg())
             for suma in results['summary']:
                 output += '<h3>[{}]</h3>{}<br>'.format(i, suma)
                 i += 1
-            output += '</p><table style="width: 100%"><tr><th>word</th><th>frequency</th></tr>'
+            output += '</div></p><h2>Statistic</h2><table style="width: 60%;"><tr><th>word</th><th>frequency</th></tr>'
             i = 0
             for key in sorted(results['wordRank'], key=results['wordRank'].get, reverse=True):
                 if (i <= 20):
@@ -35,6 +42,19 @@ class Handler(BaseHTTPRequestHandler):
                     break
 
             output += '</table>'
+            output += '''
+                        <style>
+                            table{
+                                position: relative;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                border-collapse: collapse;
+                            }
+                            table, th, td{
+                                border: 1px solid black; 
+                            }
+                        
+                        </style></body></html>'''
             self.wfile.write(output.encode())
         else:
             output = ''
