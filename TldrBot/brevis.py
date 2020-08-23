@@ -16,8 +16,8 @@ try:
     from googlesearch import search
 except:
     print('search module not found')
-from imgGet import imgGet
-import xlsxwriter
+from imgGet import imgGetter
+
 
 
 
@@ -43,7 +43,7 @@ class brevis():
 
 
     def firstImage(self):
-        getter = imgGet(self.query)
+        getter = imgGetter(self.query)
         img = getter.getImg()
         return img
 
