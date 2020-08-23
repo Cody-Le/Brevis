@@ -91,7 +91,7 @@ class brevis():
         # find their own gramatical counter part
         for text in self.paragraph:
             for sign in [',', '.', '"', '...', ':', "?", "'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|',
-                         "@", '!', '<', '>', '{', ')', '&',';', 'â€™']:
+                         "@", '!', '<', '>', '{', ')', '&',';', 'â€™', 'ref=harv', 'cs1', "''", '``']:
                 text = text.replace(sign, "")
 
             instanceText = word_tokenize(text.lower())  # Instance of the real text

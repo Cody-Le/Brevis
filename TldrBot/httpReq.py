@@ -19,6 +19,7 @@ class Handler(BaseHTTPRequestHandler):
             output = ''
             output += '''<html>
                         <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <title>Brevis</title>
                         </head>
                         <body style="font-family: san-serif;">
@@ -44,7 +45,7 @@ class Handler(BaseHTTPRequestHandler):
             brevisObj = brevis(query, lookAmt=pages, resultAmt=results, shortResult=short)
             results = brevisObj.main()
             img = imgGetter(query = query)
-            output += '<h2 style= "text-align: center;">Query: {},  reduced by {}%</h2><br><h2 style="text-align: center;">Summary</h2><br><img src={}><div style="padding: 0px 200px 20px 200px;">'.format(query, results['percentage'], img.getImg())
+            output += '<h2 style= "text-align: center;">Query: {},  reduced by {}%</h2><br><h2 style="text-align: center;">Summary</h2><br><img src={}><div style="padding: 0px 400px 20px 400px;">'.format(query, results['percentage'], img.getImg())
             for suma in results['summary']:
                 output += '<h3>[{}]</h3>{}<br>'.format(i, suma)
                 i += 1
