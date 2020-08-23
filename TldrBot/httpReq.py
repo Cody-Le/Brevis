@@ -29,6 +29,7 @@ class Handler(BaseHTTPRequestHandler):
             i = 0
             pages = 15
             results = 5
+            short = False;
             print(parse_qs(parsed.query))
             query = parse_qs(parsed.query).get('q')[0]
             print(query)
@@ -36,14 +37,18 @@ class Handler(BaseHTTPRequestHandler):
                 pages = int(parse_qs(parsed.query).get('pgs')[0])
             if parse_qs(parsed.query).get('r'):
                 results = int(parse_qs(parsed.query).get('r')[0])
-            brevisObj = brevis(query, lookAmt=pages, resultAmt=results)
+            if parse_qs(parsed.query).get('short'):
+                if parse_qs(parsed.query).get('short').lower() == 't' or parse_qs(parsed.query).get('short').lower() == 'true':
+                    short= True
+
+            brevisObj = brevis(query, lookAmt=pages, resultAmt=results, shortResult=short)
             results = brevisObj.main()
             img = imgGetter(query = query)
-            output += '<h2 style= "text-align: center;">Query: {},  reduced by {}%</h2><br><h2>Summary</h2><br><img src={}><div style="padding: 0px 200px 20px 200px;">'.format(query, results['percentage'], img.getImg())
+            output += '<h2 style= "text-align: center;">Query: {},  reduced by {}%</h2><br><h2 style="text-align: center;">Summary</h2><br><img src={}><div style="padding: 0px 200px 20px 200px;">'.format(query, results['percentage'], img.getImg())
             for suma in results['summary']:
                 output += '<h3>[{}]</h3>{}<br>'.format(i, suma)
                 i += 1
-            output += '</div></p><h2>Statistic</h2><table style="width: 60%;"><tr><th>word</th><th>frequency</th></tr>'
+            output += '</div></p><h2 style="text-align: center;">Statistic</h2><table style="width: 60%;, text-align: center;"><tr><th>word</th><th>frequency</th></tr>'
             i = 0
             for key in sorted(results['wordRank'], key=results['wordRank'].get, reverse=True):
                 if (i <= 20):
@@ -52,7 +57,13 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     break
 
-            output += '</table>'
+            output += '</table><br><br><h2 style="text-align:center;">Citation</h2>'
+            links = brevisObj.citation()
+            if links != None:
+                for link in brevisObj.citation():
+                    output += f'<a href="{link}"><p>{link}<p></a>'
+            else:
+                output += '<p>links are not available</p>'
             output += '''
                         <style>
                             img{
@@ -60,6 +71,15 @@ class Handler(BaseHTTPRequestHandler):
                                 left: 50%;
                                 min-width: 30%;
                                 transform: translateX(-50%);  
+                            
+                            }
+                            
+                            p, a{
+                                text-align: center;
+                            
+                            }
+                            h2{
+                                text=aiign:center;
                             
                             }
                             table{

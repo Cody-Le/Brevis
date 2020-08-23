@@ -30,13 +30,14 @@ dictionary = PyDictionary()
 paragraph = []
 command = None
 class brevis():
-    def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = paragraph, totalWord = 0):
+    def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = paragraph, totalWord = 0, links = []):
         self.paragraph = paragraph
         self.query = query
         self.lookAmt = lookAmt
         self.resultAmt = resultAmt
         self.shortResult = shortResult
         self.totalWord = totalWord
+        self.links = []
 
 
 
@@ -52,20 +53,20 @@ class brevis():
         self.totalWord = 0
         # use google api to search for link with query and return a certain result
         results = search(self.query, tld="com", num=2, stop=self.lookAmt, pause=2, lang='en')
-        links = []
+        self.links = []
         for j in results:
             print(j)
             if re.findall('favicon.io', j):
                 continue
             else:
-                links.append(j)
-        for j in links:
+                self.links.append(j)
+        for j in self.links:
             try:
                 print(j)
                 html_content = requests.get(j).text
                 soup = bs(html_content, "html.parser")
                 print("Extracted the html and souped, proceeding")
-                for tag in ['script', 'button', 'nav', 'a', "style"]:
+                for tag in ['script', 'button', 'nav', 'a', "style", 'list', 'ul']:
                     for t in soup.select(tag):
                         t.extract()
                 texts = soup.find('body')
@@ -74,6 +75,13 @@ class brevis():
                     self.totalWord += len(texts.get_text())
             except:
                 continue
+    def citation(self):
+        if self.links == None:
+            return None
+        else:
+            return self.links
+
+
 
     def summary(self):
         returnObj = {} #this is the object will be return in a json like type
