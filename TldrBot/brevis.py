@@ -12,10 +12,7 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import WordNetLemmatizer
 import pandas as pd
 from ftfy import fix_text
-try:
-    from googlesearch import search
-except:
-    print('search module not found')
+from googleLInk import lookup
 from imgGet import imgGetter
 
 
@@ -52,9 +49,10 @@ class brevis():
     def look(self):
         self.totalWord = 0
         # use google api to search for link with query and return a certain result
-        results = search(self.query, tld="com", num=2, stop=self.lookAmt, pause=2, lang='en')
+        searchEngine = lookup(self.query, results=self.lookAmt)
+        results = searchEngine.search()
         self.links = []
-        for j in results:
+        for j in results.values():
             print(j)
             if re.findall('favicon.io', j):
                 continue
@@ -66,7 +64,7 @@ class brevis():
                 html_content = requests.get(j).text
                 soup = bs(html_content, "html.parser")
                 print("Extracted the html and souped, proceeding")
-                for tag in ['script', 'button', 'nav', 'a', "style", 'list', 'ul']:
+                for tag in ['script', 'button', 'nav', 'a', "style", 'list', 'ul', 'form']:
                     for t in soup.select(tag):
                         t.extract()
                 texts = soup.find('body')
@@ -91,7 +89,7 @@ class brevis():
         # find their own gramatical counter part
         for text in self.paragraph:
             for sign in [',', '.', '"', '...', ':', "?", "'", '_', '`', '(', ')', '!', "*", '%', '~', '[', ']', '|',
-                         "@", '!', '<', '>', '{', ')', '&',';', 'â€™', 'ref=harv', 'cs1', "''", '``']:
+                         "@", '!', '<', '>', '{', ')', '&',';', 'â€™', 'ref=harv', 'cs1', "''", '``','p', 'â€', 'â€™', '}', 'u']:
                 text = text.replace(sign, "")
 
             instanceText = word_tokenize(text.lower())  # Instance of the real text

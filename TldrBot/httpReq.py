@@ -39,8 +39,9 @@ class Handler(BaseHTTPRequestHandler):
             if parse_qs(parsed.query).get('r'):
                 results = int(parse_qs(parsed.query).get('r')[0])
             if parse_qs(parsed.query).get('short'):
-                if parse_qs(parsed.query).get('short').lower() == 't' or parse_qs(parsed.query).get('short').lower() == 'true':
-                    short= True
+                print(parse_qs(parsed.query).get('short')[0])
+                if parse_qs(parsed.query).get('short')[0].lower() == 't' or parse_qs(parsed.query).get('short')[0].lower() == 'true':
+                    short = True
 
             brevisObj = brevis(query, lookAmt=pages, resultAmt=results, shortResult=short)
             results = brevisObj.main()
