@@ -2,9 +2,7 @@ import sys
 import re
 import requests
 from bs4 import BeautifulSoup as bs
-from bs4.element import Comment
 import nltk
-from google_images_search import GoogleImagesSearch
 from PyDictionary import PyDictionary
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
@@ -14,20 +12,21 @@ import pandas as pd
 from ftfy import fix_text
 from googleLInk import lookup
 from imgGet import imgGetter
-
-
+import multiprocessing
+from multiprocessing import Manager, Value
+from ctypes import c_char_p
+import time
 
 
 #set up nltk
-nltk.download('stopwords')
-lemmatizer = WordNetLemmatizer()
-dictionary = PyDictionary()
+
+
 
 #define global variable
-paragraph = []
+
 command = None
 class brevis():
-    def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = paragraph, totalWord = 0, links = []):
+    def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = [], totalWord = 0, links = [], j ='', ):
         self.paragraph = paragraph
         self.query = query
         self.lookAmt = lookAmt
@@ -35,18 +34,37 @@ class brevis():
         self.shortResult = shortResult
         self.totalWord = totalWord
         self.links = []
+        self.j = j
+
+        self.setup()
 
 
-
-
+    def setup(self):
+        nltk.download('stopwords')
+        self.lemmatizer = WordNetLemmatizer()
+        dictionary = PyDictionary()
 
     def firstImage(self):
         getter = imgGetter(self.query)
         img = getter.getImg()
         return img
 
+    def soupHTML(self):
+        html_content = requests.get(self.j).text
+        soup = bs(html_content, "html.parser")
+        for tag in ['script', 'button', 'nav', 'a', "style", 'list', 'ul', 'form', 'input']:
+            for t in soup.select(tag):
+                t.extract()
+        texts = soup.find('body')
+        if len(texts.get_text()) >= 1600:
+            print(texts.get_text())
+            self.string.value = texts.get_text()
+            self.currentLength.value = len(texts.get_text())
+            print("Extracted the html and souped, proceeding")
+
 
     def look(self):
+
         self.totalWord = 0
         # use google api to search for link with query and return a certain result
         searchEngine = lookup(self.query, results=self.lookAmt)
@@ -58,19 +76,28 @@ class brevis():
                 continue
             else:
                 self.links.append(j)
+
+        i = 0
         for j in self.links:
+
             try:
-                print(j)
-                html_content = requests.get(j).text
-                soup = bs(html_content, "html.parser")
-                print("Extracted the html and souped, proceeding")
-                for tag in ['script', 'button', 'nav', 'a', "style", 'list', 'ul', 'form']:
-                    for t in soup.select(tag):
-                        t.extract()
-                texts = soup.find('body')
-                if len(texts.get_text()) >= 1600:
-                    self.paragraph.append(texts.get_text())
-                    self.totalWord += len(texts.get_text())
+                print(i)
+                self.j = j
+                manager = Manager()
+                self.string = manager.Value(c_char_p, '')
+                self.currentLength = Value('d', 0.0)
+                p = multiprocessing.Process(target=self.soupHTML)
+                p.start()
+                p.join(60)
+                if p.is_alive():
+                    print('Souping is taking too long, terminating for', j)
+                    p.terminate()
+                    p.join
+                self.paragraph.append(self.string.value)
+                i += 1
+                self.totalWord += self.currentLength.value
+
+
             except:
                 continue
     def citation(self):
@@ -99,7 +126,7 @@ class brevis():
                 # lemantized word
                 try:
                     try:
-                        lm_word = lemmatizer.lemmatize(word, pos=wn.synsets(word)[0].pos())
+                        lm_word = self.lemmatizer.lemmatize(word, pos=wn.synsets(word)[0].pos())
                         if lm_word in wordRank:  # check if the word is already in the rank table
                             wordRank[lm_word.lower()] += 1  # update the frequency
                         else:
@@ -107,7 +134,7 @@ class brevis():
                                 lm_word.lower()] = 1  # reset the frequency, giving a default frequency to add on later
                     except:
                         reword = re.sub("^\W", "", word)
-                        lm_word = lemmatizer.lemmatize(reword, pos=wn.synsets(reword)[0].pos())
+                        lm_word = self.lemmatizer.lemmatize(reword, pos=wn.synsets(reword)[0].pos())
                         if lm_word in wordRank:  # check if the word is already in the rank table
                             wordRank[lm_word.lower()] += 1  # update the frequency
                         else:
@@ -136,7 +163,7 @@ class brevis():
                 score = 0
                 for word in word_tokenize(sentence):
                     try:
-                        lm_word = lemmatizer.lemmatize(word, pos=wn.synsets(word)[0].pos())  # lemantized the word
+                        lm_word = self.lemmatizer.lemmatize(word, pos=wn.synsets(word)[0].pos())  # lemantized the word
                         score += wordRank[lm_word]  # assigned point for the sentence base on frequency of the word
 
                     except:
@@ -166,34 +193,34 @@ class brevis():
         print("------------------------------------------------------------------------")
         for result in sentences[0:self.resultAmt]:
             resultWord += len(result)
-        print("Short", resultWord / self.totalWord * 100, "%")
+        if self.totalWord != 0:
+            print("Short", resultWord / self.totalWord * 100, "%")
+        else:
+            print('total word none, scan failed')
+            print('')
         print("------------------------------------------------------------------------")
         returnObj['summary'] = sentences[0:self.resultAmt]
         returnObj['wordRank'] = wordRank
         returnObj['sentenceRank'] = sentRank
-        returnObj['percentage'] =  resultWord / self.totalWord * 100
+        print(self.totalWord)
+        try:
+            if self.totalWord == 0:
+                print('failed')
+            else:
+                returnObj['percentage'] = resultWord / self.totalWord * 100
+        except ZeroDivisionError:
+            return returnObj
         return returnObj
     def main(self):
         self.paragraph = []
         self.look()
         results =  self.summary()
-        self.firstImage()
+        results['img'] = self.firstImage()
         return results
 
 #main loop
-if False:
-    lookAmt = 30
-    resultAmt = 5
-    x = input("Search for summary: ")
-        
-    brevis.look(x, lookAmt)
-    i = 1
-    for suma in brevis.summary(paragraph, resultAmt):
-        print('[' + str(i) + ']', suma + '\n')
-        
-        i += 1
-    
 
 
 
-    
+
+

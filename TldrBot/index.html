@@ -4,42 +4,42 @@
     <meta charset="UTF-8">
     <title>Brevis</title>
     <link rel="stylesheet" type="text/css" href="./index.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 		<h1>
 			Brevis
 		</h1>
-		<h2>
-			Query: benefit of chicken, minimize to 2.501240% 
+		<h2 id='header'>
+			Enter a query or a command
 		</h2>
-		<p id='output'>
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p id='output' class='output'>
+			&nbsp;&nbsp;&nbsp;&nbsp;Meet Brevis, a bot that take in a query to scan through website and try it's best to give a summary. Treat it
+			as a new born baby, because in this early state of life, it is still very flawed and need improvement.
 			<br>
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			&nbsp;&nbsp;&nbsp;&nbsp;Inspire by a bot on Reddit, it was to be created, seek to be a tool to help learn new thing, giving the statistic, and the sentence that would most likely to give a good summary to a sentence.
 			<br>
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		</p>
-		<div class='input'>
-			<label for='input'>Input: </label>
-			<input type="" name="input" id='queryBox'>
-			<button onclick="search()">Send</button>
+		<div class='inputContainer'>
+			<div class='input'>
+				<label for='input'>Input: </label>
+				<input type="" name="input" id='queryBox'>
+				<label>Results</label>
+				<input type="number" name="" value=5 id='results'>
+				<label>Pages</label>
+				<input type="number" name="" value=150 id='pages'>
+				<label>Short</label>
+				<input type="checkbox" name="" id='short'>
+				
+				<button onclick="search()">Send</button>
+			</div>
 		</div>
 </body>
-<script type="text/javascript" src="./index.js">
-</script>
+<script src="index.js"></script>
 </html>

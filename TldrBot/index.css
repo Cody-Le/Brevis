@@ -5,6 +5,22 @@ body{
 
 .input{
 	position: fixed;
-	bottom:50px;
-	right: 50px;
+	width: 100%;
+	bottom: 0px;
+	padding-bottom: 50px;
+	padding-top: 50px;
+	width: 100%;
+	heigth: 50px;
+	background-color: #FAFAFA;
 }
+
+.output{
+	max-width: 700px;
+	text-align: left;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+
+
+}
+

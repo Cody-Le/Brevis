@@ -17,8 +17,14 @@ def home():
 def main():
     query = request.args.get('q')
     pages = 15
+    result = 5
+    short = False
     if request.args.get('pgs'):
         pages = int(request.args.get('pgs'))
-    br = brevis(query=query, lookAmt=pages)
+    if request.args.get('r'):
+        result = int(request.args.get('r'))
+    if request.args.get('short'):
+        short = True
+    br = brevis(query=query, lookAmt=pages, resultAmt=result, shortResult=short)
     results = br.main()
     return jsonify(results)
