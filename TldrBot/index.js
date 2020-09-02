@@ -42,9 +42,17 @@ function search(){
 	    	for (var summa in data.summary){
 	    		summary += '&nbsp;&nbsp;&nbsp;&nbsp;[' + summa + ']' + data.summary[summa] + '<br>'
 	    	}
+
 	    	
 	    	document.getElementById('header').innerHTML = 'Query: ' + query + ', minimize to ' + data.percentage + '%'
 	    	document.getElementById('output').innerHTML = summary
+	    	document.getElementById('firstIMG').src = data.img
+	    	if(data.abstract){
+	    		console.log(data.abstract)
+	    		document.getElementById('abstractOutput').innerHTML = data.abstract
+	    	}
+	    	document.getElementById('navigation').style.display = "block"
+	    	document.getElementById('input').style.display = 'none'
 
 	    })
 	    .catch(error=>{
@@ -52,9 +60,25 @@ function search(){
 	    })
     }
 
+}
 
+function statistic(){
+	console.log('reqOBJ', reqObject)
+	document.getElementById('output').style.display = 'none'
+	document.getElementById('outputStatistic').style.display = 'block'
+	for (var word in reqObject.sortedWordRank.slice(0,25)){
+		document.getElementById('outputTable').innerHTML += '<tr><td>' + reqObject.sortedWordRank[word] + '</td><td>' + reqObject.wordRank[reqObject.sortedWordRank[word]]+'</td>'+'</tr>'
+	}
+	for (var link in reqObject.links){
+		document.getElementById('citation').innerHTML += '<a href=' + link + '>' + reqObject[link] + '</a><br>'
+	}
+}
 
+function summaryShow(){
+   	document.getElementById('output').style.display = 'block'
+   	document.getElementById('outputStatistic').style.display = 'none'
+}
 
-    
-    
+function inputShow(){
+	document.getElementById('input').style.display = 'block'
 }

@@ -7,27 +7,44 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-		<h1>
-			Brevis
-		</h1>
-		<h2 id='header'>
-			Enter a query or a command
-		</h2>
-		<p id='output' class='output'>
-			&nbsp;&nbsp;&nbsp;&nbsp;Meet Brevis, a bot that take in a query to scan through website and try it's best to give a summary. Treat it
-			as a new born baby, because in this early state of life, it is still very flawed and need improvement.
-			<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;Inspire by a bot on Reddit, it was to be created, seek to be a tool to help learn new thing, giving the statistic, and the sentence that would most likely to give a good summary to a sentence.
-			<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		</p>
+		<div class='container'>
+			<h1>
+				Brevis
+			</h1>
+			<h2 id='header'>
+				Enter a query or a command
+			</h2>
+			<h3>Abstract</h3>
+			<p id='abstractOutput' class='abstract'>Pre made summary or abstract does not exist or loaded</p>
+
+			<img id='firstIMG' src="">
+			<h3>Summary</h3>
+			<p id='output' class='output'>
+				&nbsp;&nbsp;&nbsp;&nbsp;Meet Brevis, a bot that take in a query to scan through website and try it's best to give a summary. Treat it
+				as a new born baby, because in this early state of life, it is still very flawed and need improvement.
+				<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;Inspire by a bot on Reddit, it was to be created, seek to be a tool to help learn new thing, giving the statistic, and the sentence that would most likely to give a good summary to a sentence.
+				<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<div id='outputStatistic'>
+				<h3>Statistic</h3>
+				<table id='outputTable'>
+					<tr><th>word</th><th>frequency</th></tr>
+				</table>
+				<h3>Citation</h3>
+				<div id='citation'>
+					
+				</div>
+			</div>
+		</div>
 		<div class='inputContainer'>
-			<div class='input'>
+			<div class='input' id='input'>
 				<label for='input'>Input: </label>
 				<input type="" name="input" id='queryBox'>
 				<label>Results</label>
@@ -38,6 +55,11 @@
 				<input type="checkbox" name="" id='short'>
 				
 				<button onclick="search()">Send</button>
+			</div>
+			<div class='navigation' id='navigation'>
+				<button onclick="statistic()">statistic</button>
+				<button onclick='summaryShow()'>summary</button>
+				<button onclick='inputShow()'>query</button>
 			</div>
 		</div>
 </body>

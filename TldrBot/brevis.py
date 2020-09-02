@@ -17,13 +17,6 @@ from multiprocessing import Manager, Value
 from ctypes import c_char_p
 import time
 
-
-#set up nltk
-
-
-
-#define global variable
-
 command = None
 class brevis():
     def __init__(self, query, lookAmt = 15, resultAmt = 5, shortResult = False, paragraph = [], totalWord = 0, links = [], j ='', ):
@@ -33,7 +26,7 @@ class brevis():
         self.resultAmt = resultAmt
         self.shortResult = shortResult
         self.totalWord = totalWord
-        self.links = []
+        self.links = {}
         self.j = j
 
         self.setup()
@@ -69,16 +62,11 @@ class brevis():
         # use google api to search for link with query and return a certain result
         searchEngine = lookup(self.query, results=self.lookAmt)
         results = searchEngine.search()
-        self.links = []
-        for j in results.values():
-            print(j)
-            if re.findall('favicon.io', j):
-                continue
-            else:
-                self.links.append(j)
+        self.links = results
+        print(self.links)
 
         i = 0
-        for j in self.links:
+        for j in self.links.values():
 
             try:
                 print(i)
@@ -202,6 +190,12 @@ class brevis():
         returnObj['summary'] = sentences[0:self.resultAmt]
         returnObj['wordRank'] = wordRank
         returnObj['sentenceRank'] = sentRank
+        returnObj['sortedWordRank'] = sorted(wordRank, reverse=True, key=wordRank.get)
+        returnObj['links'] = self.links
+        searchEngine = lookup(query=self.query, results=1)
+        x = searchEngine.getAbstract()
+        if x:
+            returnObj['abstract'] = x
         print(self.totalWord)
         try:
             if self.totalWord == 0:

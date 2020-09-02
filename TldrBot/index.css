@@ -1,12 +1,17 @@
 body{
     text-align: center;
+    margin: 0px;
+    
 }
 
 
-.input{
-	position: fixed;
+.container{
+	min-height: calc(100vh - 150px);
+}
+
+.inputContainer{
 	width: 100%;
-	bottom: 0px;
+
 	padding-bottom: 50px;
 	padding-top: 50px;
 	width: 100%;
@@ -24,3 +29,27 @@ body{
 
 }
 
+.abstract{
+	max-width: 700px;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.navigation{
+	display: none;
+}
+
+#outputStatistic{
+	display: none;
+}
+
+#outputTable{
+	width: 50%;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+table, th, td {
+  border: 1px solid black;
+}
