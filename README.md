@@ -10,6 +10,20 @@ Pass on to an SMMRY like algorithm, to rank the word appears in the website then
 
 
 # Installation
-Goto url
-write 'http://localhost:8080/?q=' + your query
-customize variable by adding 'r=result receive', 'pgs=page search', 'short = applying an equation to get the shortest answer'
+1. All file are ignorable except the 3 python files within [/TldrBot/TldrBot] folder
+
+2. Run server website
+  ```sh
+  py httpReq.py
+  ```
+
+3. Optional parameter include variable by adding 'r=result receive', 'pgs=page search', 'short = applying an equation to get the shortest answer'
+
+  ```sh
+  r = result received
+  pgs = pages that will searched from
+  short = bool if the result need to also be as short as possible
+  ```
+
+4. search ['http://localhost:8080/?q=' + your query] on your chosen browser
+
