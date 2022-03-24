@@ -10,7 +10,7 @@ Pass on to an SMMRY like algorithm, to rank the word appears in the website then
 
 
 # Installation
-1. All file are ignorable except the 3 python files within [/TldrBot/TldrBot] folder
+1. All file are ignorable except the 3 python files within **/TldrBot/TldrBot** folder
 
 2. Run server website
   ```sh
@@ -25,5 +25,5 @@ Pass on to an SMMRY like algorithm, to rank the word appears in the website then
   short = bool if the result need to also be as short as possible
   ```
 
-4. search ['http://localhost:8080/?q=' + your query] on your chosen browser
+4. search **'http://localhost:8080/?q=' + your query** on your chosen browser
 
